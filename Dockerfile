@@ -33,16 +33,17 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         intl \
         gd \
         pcntl \
-        bcmath
+        bcmath \
+    && pecl install redis \
+    && docker-php-ext-enable redis
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/novaretail-rag
 
-COPY composer.json composer.lock ./
+COPY . .
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-COPY . .
 COPY --from=frontend /app/public/build ./public/build
 
 RUN chmod +x railway/start-app.sh railway/start-worker.sh \
