@@ -31,7 +31,9 @@ php artisan storage:link || true
 php artisan migrate --force
 
 if [ "${RUN_DB_SEED:-false}" = "true" ]; then
-  php artisan db:seed --force
+  echo "RUN_DB_SEED=true: running php artisan db:seed before starting server..."
+  php artisan db:seed
+  echo "Seeding complete."
 fi
 
 php artisan optimize:clear
