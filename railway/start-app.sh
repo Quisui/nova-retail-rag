@@ -73,4 +73,10 @@ php artisan config:cache
 php artisan route:cache || true
 php artisan view:cache || true
 
+# If queue is async, run a worker in background in the same service.
+if [ "${QUEUE_CONNECTION:-sync}" = "database" ] || [ "${QUEUE_CONNECTION:-sync}" = "redis" ]; then
+  echo "Starting inline queue worker for QUEUE_CONNECTION=${QUEUE_CONNECTION}..."
+  php artisan queue:work "${QUEUE_CONNECTION}" --sleep=2 --tries=3 --timeout=120 --max-time=3600 --verbose &
+fi
+
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"
