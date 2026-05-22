@@ -31,7 +31,7 @@
                 <td class="py-3"><span class="status-pill status-{{ $doc->status }}">{{ $doc->status }}</span></td>
                 <td class="py-3">{{ $doc->chunks_count }}</td>
                 <td class="py-3">{{ $doc->created_at->format('Y-m-d H:i') }}</td>
-                <td class="py-3"><a href="{{ route('documents.show', ['document' => $doc->id], absolute: false) }}" class="text-cyan-700 font-medium">Ver</a></td>
+                <td class="py-3"><a href="{{ route('documents.show', ['id' => $doc->id], absolute: false) }}" class="text-cyan-700 font-medium">Ver</a></td>
             </tr>
         @empty
             <tr><td colspan="6" class="py-6 text-center text-slate-500">No hay documentos cargados.</td></tr>

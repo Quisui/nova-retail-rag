@@ -20,7 +20,7 @@
         <h3 class="panel-title">Documentos recientes</h3>
         <div class="divide-y">
             @forelse($recentDocuments as $doc)
-                <a href="{{ route('documents.show', ['document' => $doc->id], absolute: false) }}" class="block py-3 hover:bg-slate-50 px-2 rounded">
+                <a href="{{ route('documents.show', ['id' => $doc->id], absolute: false) }}" class="block py-3 hover:bg-slate-50 px-2 rounded">
                     <p class="font-medium">{{ $doc->title }}</p>
                     <p class="text-sm text-slate-500">Estado: {{ $doc->status }} · {{ $doc->created_at->diffForHumans() }}</p>
                 </a>
