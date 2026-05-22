@@ -9,7 +9,7 @@
 </div>
 
 <section class="panel max-w-2xl">
-    <form method="POST" action="{{ route('documents.store') }}" enctype="multipart/form-data" class="space-y-5">
+    <form method="POST" action="{{ route('documents.store', absolute: false) }}" enctype="multipart/form-data" class="space-y-5">
         @csrf
         <div>
             <label class="form-label">Título</label>

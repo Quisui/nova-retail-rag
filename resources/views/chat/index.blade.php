@@ -8,7 +8,7 @@
     <p class="text-slate-500">Consulta políticas, procesos y conocimiento interno con RAG o conversa en modo asistente.</p>
 </div>
 
-<section class="panel" id="chatApp" data-ask-url="{{ route('chat.ask') }}" data-csrf="{{ csrf_token() }}">
+<section class="panel" id="chatApp" data-ask-url="{{ route('chat.ask', absolute: false) }}" data-csrf="{{ csrf_token() }}">
     <h3 class="panel-title">Knowledge Chat</h3>
 
     <div id="chatMessages" class="rounded-xl border border-slate-200 bg-slate-50 p-4 h-[430px] overflow-y-auto overflow-x-hidden space-y-4 mb-5">

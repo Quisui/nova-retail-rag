@@ -15,10 +15,10 @@
         </div>
 
         <nav class="space-y-2">
-            <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-            <a href="{{ route('documents.index') }}" class="sidebar-link {{ request()->routeIs('documents.*') ? 'active' : '' }}">Documentos</a>
-            <a href="{{ route('chat.index') }}" class="sidebar-link {{ request()->routeIs('chat.index') ? 'active' : '' }}">Chat IA</a>
-            <a href="{{ route('chat.history') }}" class="sidebar-link {{ request()->routeIs('chat.history') ? 'active' : '' }}">Historial</a>
+            <a href="{{ route('dashboard', absolute: false) }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
+            <a href="{{ route('documents.index', absolute: false) }}" class="sidebar-link {{ request()->routeIs('documents.*') ? 'active' : '' }}">Documentos</a>
+            <a href="{{ route('chat.index', absolute: false) }}" class="sidebar-link {{ request()->routeIs('chat.index') ? 'active' : '' }}">Chat IA</a>
+            <a href="{{ route('chat.history', absolute: false) }}" class="sidebar-link {{ request()->routeIs('chat.history') ? 'active' : '' }}">Historial</a>
         </nav>
     </aside>
 
