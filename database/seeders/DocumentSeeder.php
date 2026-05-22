@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Jobs\ProcessDocumentJob;
 use App\Models\Document;
 use App\Services\RagService;
 use Illuminate\Database\Seeder;
@@ -13,6 +14,9 @@ class DocumentSeeder extends Seeder
 {
     public function run(): void
     {
+        $syncIngest = filter_var((string) env('SEED_SYNC_INGEST', 'false'), FILTER_VALIDATE_BOOL);
+        $hasGeminiKey = (string) config('services.gemini.api_key') !== '';
+
         $documents = [
             'Política de devoluciones' => "# Política de Devoluciones NovaRetail\n\nLas devoluciones de productos tecnológicos se aceptan dentro de los 30 días posteriores a la compra con factura vigente.\n\n## Reglas principales\n- El equipo debe incluir caja y accesorios.\n- Equipos con daño físico no aplican, salvo defecto de fábrica reportado en las primeras 48 horas.\n- El reembolso puede realizarse a método original o nota de crédito.\n- Productos en promoción pueden tener políticas especiales informadas al momento de compra.",
             'Política de garantías' => "# Política de Garantías NovaRetail\n\nLa garantía estándar para laptops y smartphones es de 12 meses con cobertura por fallas de fabricación.\n\n## Cobertura\n- Diagnóstico técnico inicial en máximo 72 horas hábiles.\n- Reparación en centros autorizados.\n- Reemplazo si no hay reparación viable dentro de 20 días hábiles.\n\n## Exclusiones\n- Daño por líquidos\n- Golpes o manipulación no autorizada\n- Uso con voltaje incorrecto",
@@ -38,15 +42,23 @@ class DocumentSeeder extends Seeder
                 ]
             );
 
-            if ((string) config('services.gemini.api_key') !== '') {
+            if ($hasGeminiKey) {
                 try {
-                    app(RagService::class)->ingestDocument($document);
+                    if ($syncIngest) {
+                        app(RagService::class)->ingestDocument($document);
+                    } else {
+                        ProcessDocumentJob::dispatch($document->id);
+                    }
                 } catch (\Throwable $exception) {
                     Log::error('Document seeding ingest failed', [
                         'title' => $title,
                         'error' => $exception->getMessage(),
                     ]);
                 }
+            } else {
+                Log::warning('Document seeded without Gemini API key, document left pending.', [
+                    'title' => $title,
+                ]);
             }
         }
     }

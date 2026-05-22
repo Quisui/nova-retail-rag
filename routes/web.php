@@ -3,7 +3,10 @@
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/healthz', static fn (): JsonResponse => response()->json(['status' => 'ok']))->name('healthz');
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 

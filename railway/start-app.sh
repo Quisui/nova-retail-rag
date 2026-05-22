@@ -27,10 +27,44 @@ if [ -z "${APP_KEY:-}" ]; then
   echo "APP_KEY not provided. Generated ephemeral APP_KEY for this deploy."
 fi
 
+echo "Waiting for database connection..."
+DB_WAIT_MAX_ATTEMPTS="${DB_WAIT_MAX_ATTEMPTS:-30}"
+DB_WAIT_SLEEP_SECONDS="${DB_WAIT_SLEEP_SECONDS:-2}"
+attempt=1
+while [ "$attempt" -le "$DB_WAIT_MAX_ATTEMPTS" ]; do
+  if php -r '
+    $host = getenv("DB_HOST") ?: "127.0.0.1";
+    $port = getenv("DB_PORT") ?: "5432";
+    $db = getenv("DB_DATABASE") ?: "forge";
+    $user = getenv("DB_USERNAME") ?: "forge";
+    $pass = getenv("DB_PASSWORD") ?: "";
+    $dsn = "pgsql:host={$host};port={$port};dbname={$db}";
+    try {
+      new PDO($dsn, $user, $pass, [PDO::ATTR_TIMEOUT => 5]);
+      exit(0);
+    } catch (Throwable $e) {
+      exit(1);
+    }
+  ' >/dev/null 2>&1; then
+    echo "Database is reachable."
+    break
+  fi
+
+  if [ "$attempt" -eq "$DB_WAIT_MAX_ATTEMPTS" ]; then
+    echo "Database is not reachable after ${DB_WAIT_MAX_ATTEMPTS} attempts."
+    exit 1
+  fi
+
+  echo "DB not ready yet (${attempt}/${DB_WAIT_MAX_ATTEMPTS}), retrying in ${DB_WAIT_SLEEP_SECONDS}s..."
+  sleep "$DB_WAIT_SLEEP_SECONDS"
+  attempt=$((attempt + 1))
+done
+
 php artisan storage:link || true
 php artisan migrate --force
 
 if [ "${RUN_DB_SEED:-false}" = "true" ]; then
+  echo "RUN_DB_SEED=true -> executing database seeder."
   php artisan db:seed --force
 fi
 

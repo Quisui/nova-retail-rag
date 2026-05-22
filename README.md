@@ -192,12 +192,21 @@ GEMINI_EMBEDDING_DIMENSIONS=768
 
 # Ejecuta seed automático en boot (solo primer deploy recomendado)
 RUN_DB_SEED=false
+
+# Si true, hace ingesta/embeddings durante el seed en el proceso web (más lento).
+# Recomendado en Railway: false (el worker procesa la cola).
+SEED_SYNC_INGEST=false
+
+# Espera de DB al iniciar contenedor
+DB_WAIT_MAX_ATTEMPTS=30
+DB_WAIT_SLEEP_SECONDS=2
 ```
 
 Notas:
 
 - `start-app.sh` ejecuta `php artisan migrate --force` en cada deploy.
 - Si `RUN_DB_SEED=true`, también ejecuta `php artisan db:seed --force`.
+- Con `SEED_SYNC_INGEST=false`, el seed encola procesamiento y evita bloquear healthcheck.
 - El worker procesa cola con `queue:work database`.
 - Mantén `APP_KEY` fija en Railway para no invalidar sesiones/cifrado entre despliegues.
 - Si la migración falla con `pgvector`, tu DB de Railway no tiene extensión `vector` habilitada.
