@@ -189,13 +189,18 @@ GEMINI_API_KEY=...
 GEMINI_CHAT_MODEL=gemini-2.5-flash
 GEMINI_EMBEDDING_MODEL=gemini-embedding-001
 GEMINI_EMBEDDING_DIMENSIONS=768
+
+# Ejecuta seed automático en boot (solo primer deploy recomendado)
+RUN_DB_SEED=false
 ```
 
 Notas:
 
 - `start-app.sh` ejecuta `php artisan migrate --force` en cada deploy.
+- Si `RUN_DB_SEED=true`, también ejecuta `php artisan db:seed --force`.
 - El worker procesa cola con `queue:work database`.
 - Mantén `APP_KEY` fija en Railway para no invalidar sesiones/cifrado entre despliegues.
+- Si la migración falla con `pgvector`, tu DB de Railway no tiene extensión `vector` habilitada.
 
 ## Uso funcional
 

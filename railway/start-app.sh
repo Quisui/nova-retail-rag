@@ -29,6 +29,11 @@ fi
 
 php artisan storage:link || true
 php artisan migrate --force
+
+if [ "${RUN_DB_SEED:-false}" = "true" ]; then
+  php artisan db:seed --force
+fi
+
 php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache || true
