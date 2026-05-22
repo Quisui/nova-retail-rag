@@ -28,10 +28,15 @@ if [ -z "${APP_KEY:-}" ]; then
 fi
 
 php artisan storage:link || true
+
+echo "Running migrations..."
 php artisan migrate --force
+echo "Migrations complete."
 
 if [ "${RUN_DB_SEED:-false}" = "true" ]; then
+  echo "RUN_DB_SEED=true — running db:seed before starting server..."
   php artisan db:seed --force
+  echo "Seeding complete."
 fi
 
 php artisan optimize:clear
@@ -39,4 +44,5 @@ php artisan config:cache
 php artisan route:cache || true
 php artisan view:cache || true
 
+echo "Starting server..."
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"
